@@ -212,7 +212,8 @@ func (r *rows) fetch() error {
 					r.types[i] = timestampConverter
 				case col.Type == TimestampWithTimezone:
 					r.types[i] = timestampWithTimezoneConverter
-
+				case strings.Contains(col.Type, Decimal):
+					r.types[i] = doubleConverter
 				default:
 					return fmt.Errorf("unsupported column type: %s", col.Type)
 				}
@@ -368,6 +369,11 @@ var doubleConverter = valueConverterFunc(func(val interface{}) (driver.Value, er
 			return math.Inf(1), nil
 		case "NaN":
 			return math.NaN(), nil
+		default://when returned as a decimal(x,x), it could be returned as a string, so try to parse here.
+			f, err := strconv.ParseFloat(vv, 64)
+			if err == nil {
+				return f, nil
+			}
 		}
 
 	}
