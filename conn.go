@@ -10,6 +10,7 @@ import (
 	"math"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -369,7 +370,7 @@ var doubleConverter = valueConverterFunc(func(val interface{}) (driver.Value, er
 			return math.Inf(1), nil
 		case "NaN":
 			return math.NaN(), nil
-		default://when returned as a decimal(x,x), it could be returned as a string, so try to parse here.
+		default: //when returned as a decimal(x,x), it could be returned as a string, so try to parse here.
 			f, err := strconv.ParseFloat(vv, 64)
 			if err == nil {
 				return f, nil
